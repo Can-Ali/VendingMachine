@@ -21,7 +21,7 @@ class VendingMachineTest {
         vendingMachine = new VendingMachine();
 
         Stream.of(unAcceptedCoins).forEach($ -> vendingMachine.insertCoin($));
-
+        System.out.println("Coins inserted : " + vendingMachine.getTotal());
         assertThat(vendingMachine.getTotal()).isEqualTo(new BigDecimal(0));
     }
 
@@ -31,7 +31,7 @@ class VendingMachineTest {
         vendingMachine = new VendingMachine();
 
         Stream.of(coins).forEach($ -> vendingMachine.insertCoin($));
-
+        System.out.println("Coins inserted : " + vendingMachine.getTotal());
         assertThat(vendingMachine.getTotal()).isEqualTo(new BigDecimal(66));
     }
 
@@ -50,7 +50,9 @@ class VendingMachineTest {
             vendingMachine.selectProduct(Product.PEPSI);
         }).isInstanceOf(Exception.class);
         BigDecimal spending = Product.COKE.price.add(Product.PEPSI.price);
-
+        System.out.println("Spending : " + spending);
+        System.out.println("Total balance is not enough to select SODA! Remaining balance after COKE selected: "
+                + vendingMachine.getTotal());
         assertThat(vendingMachine.getTotal()).isEqualTo(new BigDecimal(41));
         assertThat(spending).isEqualTo(new BigDecimal(60));
     }
@@ -70,6 +72,7 @@ class VendingMachineTest {
             e.printStackTrace();
         }
 
+        System.out.println("Remaining balance : " + remaining);
         assertThat(remaining).isEqualTo(total.subtract(Product.COKE.price));
     }
 
@@ -91,9 +94,17 @@ class VendingMachineTest {
         }
 
         remaining = vendingMachine.returnProduct(Product.COKE);
+        System.out.println("Remaining balance after COKE returned: " + remaining);
         remaining = vendingMachine.returnProduct(Product.COKE);
+        System.out.println("Remaining balance after 2nd COKE returned " +
+                "(the result should be same as there is no 2nd COKE in the request) : "
+                + remaining);
         remaining = vendingMachine.returnProduct(Product.SODA);
+        System.out.println("Remaining balance after SODA returned " +
+                "(the result should be same as there is no SODA in the request) : "
+                + remaining);
 
+        System.out.println("Only PEPSI is requested! Remaining balance : " + total.subtract(Product.PEPSI.price));
         assertThat(remaining).isEqualTo(total.subtract(Product.PEPSI.price));
     }
 
@@ -113,6 +124,8 @@ class VendingMachineTest {
             e.printStackTrace();
         }
 
+        System.out.println("Total balance after reset : " + vendingMachine.getTotal());
+        System.out.println("Total products after reset : " + vendingMachine.getProducts().size());
         assertThat(vendingMachine.getTotal()).isEqualTo(ZERO);
         assertThat(vendingMachine.getProducts()).hasSize(0);
     }
